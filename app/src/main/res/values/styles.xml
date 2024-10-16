@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="buttonRed" parent="@android:style/Widget.Button.Small">
+        <item name="android:textColor">#FFFFFF</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:backgroundTint">#FF0000</item>
+        <item name="android:shape">rectangle</item>
+        <item name="android:topLeftRadius">0dp</item>
+        <item name="cornerRadius">10dp</item>
+        <item name="android:background">null</item>
+        <item name="android:layout_margin">10dp</item>
+    </style>
+    <style name="buttonBlue" parent="@android:style/Widget.Button.Small">
+        <item name="android:textColor">#FFFFFF</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:backgroundTint">#666699</item>
+        <item name="android:shape">rectangle</item>
+        <item name="cornerRadius">10dp</item>
+        <item name="android:layout_margin">10dp</item>
+    </style>
+    <style name="buttonGreen" parent="@android:style/Widget.Button.Small">
+        <item name="android:textColor">#FFFFFF</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:backgroundTint">#58855A</item>
+        <item name="android:shape">rectangle</item>
+        <item name="android:topLeftRadius">0dp</item>
+        <item name="cornerRadius">10dp</item>
+        <item name="android:background">null</item>
+        <item name="android:layout_margin">10dp</item>
+    </style>
+    <style name="buttonGrey" parent="@android:style/Widget.Button.Small">
+        <item name="android:textColor">#FFFFFF</item>
+        <item name="android:textSize">15px</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:backgroundTint">#595959</item>
+        <item name="android:shape">rectangle</item>
+        <item name="cornerRadius">10dp</item>
+        <item name="android:layout_margin">10dp</item>
+    </style>
+    <style name="buttonOrange" parent="@android:style/Widget.Button.Small">
+        <item name="android:textColor">#FFFFFF</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:backgroundTint">#FF9800</item>
+        <item name="android:shape">rectangle</item>
+        <item name="android:topLeftRadius">0dp</item>
+        <item name="cornerRadius">10dp</item>
+        <item name="android:background">null</item>
+        <item name="android:layout_margin">10dp</item>
+    </style>
+</resources>
