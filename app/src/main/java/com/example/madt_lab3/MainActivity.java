@@ -53,6 +53,7 @@ public class MainActivity extends AppCompatActivity {
         Double result = null;
         ScriptEngine engine = new ScriptEngineManager().getEngineByName("rhino");
         checkForPowerOf();
+        checkForSquareRoot();
 
         try {
           result = (double)engine.eval(formula);
@@ -79,12 +80,57 @@ public class MainActivity extends AppCompatActivity {
         tempFormula = workings;
         for(Integer index: indexOfPowers)
         {
-            changeFormula(index);
+            changeFormulaPower(index);
         }
         formula = tempFormula;
     }
 
-    private void changeFormula(Integer index)
+    private void checkForSquareRoot()
+    {
+        ArrayList<Integer> indexRoots = new ArrayList<>();
+        for(int i = 0; i < workings.length(); i++)
+        {
+            if (workings.charAt(i) == '√')
+                indexRoots.add(i);
+        }
+
+        formula = workings;
+        tempFormula = workings;
+        for(Integer index: indexRoots)
+        {
+            changeFormulaRoot(index);
+        }
+        formula = tempFormula;
+    }
+
+    public void backspaceOnClick(View view) {
+        if (!workings.isEmpty()) {
+            workings = workings.substring(0, workings.length() - 1); // Remove last character
+            workingsTV.setText(workings); // Update TextView
+        }
+    }
+
+    private void changeFormulaRoot(Integer index) {
+        String numberRight = "";
+
+        for (int i = index + 1; i < workings.length(); i++) {
+            if (isNumeric(workings.charAt(i)))
+                numberRight = numberRight + workings.charAt(i);
+            else
+                break;
+        }
+
+        if (numberRight.isEmpty()) {
+            // Handle error: "√" not followed by a number
+            return;
+        }
+
+        String original = "√" + numberRight;
+        String changed = "Math.sqrt(" + numberRight + ")";
+        tempFormula = tempFormula.replace(original, changed);
+    }
+
+    private void changeFormulaPower(Integer index)
     {
         String numberLeft = "";
         String numberRight = "";

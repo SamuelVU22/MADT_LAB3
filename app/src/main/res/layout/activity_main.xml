@@ -71,7 +71,7 @@
                 android:layout_weight="1"
                 android:textSize="@dimen/calcButtonTextSize"
                 android:background="@null"
-                android:onClick="backSpaceOnClick"
+                android:onClick="backspaceOnClick"
                 android:text="@string/backspace"
                 style="@style/buttonOrange"
                 />
