@@ -10,10 +10,12 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -23,6 +25,7 @@ public class MainActivity extends AppCompatActivity {
     String workings = "";
     String formula = "";
     String tempFormula = "";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -35,69 +38,43 @@ public class MainActivity extends AppCompatActivity {
         });
         initTextViews();
     }
-    private void initTextViews()
-    {
-        workingsTV = (TextView)findViewById(R.id.workingsTextView);
-        resultsTV = (TextView)findViewById(R.id.resultTextView);
+
+    private void initTextViews() {
+        workingsTV = (TextView) findViewById(R.id.workingsTextView);
+        resultsTV = (TextView) findViewById(R.id.resultTextView);
     }
 
-    private void setWorkings(String givenValue)
-    {
+    private void setWorkings(String givenValue) {
         workings = workings + givenValue;
         workingsTV.setText(workings);
     }
 
 
-    public void equalsOnClick(View view)
-    {
+    public void equalsOnClick(View view) {
         Double result = null;
         ScriptEngine engine = new ScriptEngineManager().getEngineByName("rhino");
-        checkForPowerOf();
         checkForSquareRoot();
 
         try {
-          result = (double)engine.eval(formula);
-        } catch (Exception e)
-        {
+            result = (double) engine.eval(formula);
+        } catch (Exception e) {
             Toast.makeText(this, "Invalid Input", Toast.LENGTH_SHORT).show();
         }
 
-        if(result != null)
-            resultsTV.setText(String.valueOf(result.doubleValue()));
+        if (result != null) resultsTV.setText(String.valueOf(result.doubleValue()));
 
     }
 
-    private void checkForPowerOf()
-    {
-        ArrayList<Integer> indexOfPowers = new ArrayList<>();
-        for(int i = 0; i < workings.length(); i++)
-        {
-            if (workings.charAt(i) == '^')
-                indexOfPowers.add(i);
-        }
 
-        formula = workings;
-        tempFormula = workings;
-        for(Integer index: indexOfPowers)
-        {
-            changeFormulaPower(index);
-        }
-        formula = tempFormula;
-    }
-
-    private void checkForSquareRoot()
-    {
+    private void checkForSquareRoot() {
         ArrayList<Integer> indexRoots = new ArrayList<>();
-        for(int i = 0; i < workings.length(); i++)
-        {
-            if (workings.charAt(i) == '√')
-                indexRoots.add(i);
+        for (int i = 0; i < workings.length(); i++) {
+            if (workings.charAt(i) == '√') indexRoots.add(i);
         }
 
         formula = workings;
         tempFormula = workings;
-        for(Integer index: indexRoots)
-        {
+        for (Integer index : indexRoots) {
             changeFormulaRoot(index);
         }
         formula = tempFormula;
@@ -114,10 +91,8 @@ public class MainActivity extends AppCompatActivity {
         String numberRight = "";
 
         for (int i = index + 1; i < workings.length(); i++) {
-            if (isNumeric(workings.charAt(i)))
-                numberRight = numberRight + workings.charAt(i);
-            else
-                break;
+            if (isNumeric(workings.charAt(i))) numberRight = numberRight + workings.charAt(i);
+            else break;
         }
 
         if (numberRight.isEmpty()) {
@@ -130,43 +105,24 @@ public class MainActivity extends AppCompatActivity {
         tempFormula = tempFormula.replace(original, changed);
     }
 
-    private void changeFormulaPower(Integer index)
-    {
-        String numberLeft = "";
-        String numberRight = "";
 
-        for(int i = index + 1; i< workings.length(); i++)
-        {
-            if(isNumeric(workings.charAt(i)))
-                numberRight = numberRight + workings.charAt(i);
-            else
-                break;
-        }
-
-        for(int i = index - 1; i >= 0; i--)
-        {
-            if(isNumeric(workings.charAt(i)))
-                numberLeft = numberLeft + workings.charAt(i);
-            else
-                break;
-        }
-
-        String original = numberLeft + "^" + numberRight;
-        String changed = "Math.pow("+numberLeft+","+numberRight+")";
-        tempFormula = tempFormula.replace(original,changed);
-    }
-
-    private boolean isNumeric(char c)
-    {
-        if((c <= '9' && c >= '0') || c == '.')
-            return true;
+    private boolean isNumeric(char c) {
+        if ((c <= '9' && c >= '0') || c == '.') return true;
 
         return false;
     }
 
+    private boolean isNumericString(String str) {
+        try {
+            Double.parseDouble(str);
+            return true;
+        } catch (NumberFormatException e) {
+            return false;
+        }
+    }
 
-    public void clearOnClick(View view)
-    {
+
+    public void clearOnClick(View view) {
         workingsTV.setText("");
         workings = "";
         resultsTV.setText("");
@@ -174,87 +130,121 @@ public class MainActivity extends AppCompatActivity {
 
     //boolean leftBracket = true;
 
-    public void rootOnClick(View view)
-    {
-            setWorkings("√");
+    public void rootOnClick(View view) {
+        setWorkings("√");
     }
 
-    public void signalChngOnClick(View view){
-        setWorkings("^");
+    public void signalChngOnClick(View view) {
+        // Check if there is something in workings
+        if (!workings.isEmpty()) {
+            // Split the workings into parts based on operators
+            String[] parts = workings.split("(?<=[-+*/])|(?=[-+*/])");
+            String lastPart = parts[parts.length - 1]; // Get the last part
+            String signal = parts[parts.length - 2];
+
+            // Check if the last part is a number
+            if (isNumericString(lastPart)) {
+                // If it's numeric, change its sign
+                lastPart = signal + lastPart;
+                if (lastPart.startsWith("-")) {
+                    lastPart = lastPart.substring(1); // Remove the negative sign
+                    lastPart = "+" + lastPart;
+                } else {
+                    lastPart = lastPart.substring(1);
+                    lastPart = "-" + lastPart; // Add a negative sign
+                }
+
+                // Rebuild the workings string
+                StringBuilder newWorkings = new StringBuilder();
+                for (int i = 0; i < parts.length - 2; i++) {
+                    newWorkings.append(parts[i]);
+                }
+                newWorkings.append(lastPart); // Append the modified last part
+
+                workings = newWorkings.toString();
+                workingsTV.setText(workings);
+
+                // Update TextView
+            }
+        }
     }
 
-    public void divisionOnClick(View view)
-    {
+//    public void signalChngOnClick(View view) {
+//        if (!workings.isEmpty()) {
+//            String[] parts = workings.split("(?<=[-+*/])|(?=[-+*/])");
+//            String lastPart = parts[parts.length - 1];
+//
+//            if (Character.isDigit(lastPart.charAt(0))) {
+//                try {
+//                    lastPart = lastPart.startsWith("-") ? lastPart.substring(1) : "-" + lastPart;
+//                    String newWorkings = String.join("", Arrays.copyOfRange(parts, 0, parts.length - 1)) + lastPart;
+//                    workings = newWorkings;
+//                    workingsTV.setText(workings);
+//                } catch (NumberFormatException e) {
+//                    // Handle the exception
+//                }
+//            }
+//        }
+//    }
+
+
+    public void divisionOnClick(View view) {
         setWorkings("/");
     }
 
-    public void sevenOnClick(View view)
-    {
+    public void sevenOnClick(View view) {
         setWorkings("7");
     }
 
-    public void eightOnClick(View view)
-    {
+    public void eightOnClick(View view) {
         setWorkings("8");
     }
 
-    public void nineOnClick(View view)
-    {
+    public void nineOnClick(View view) {
         setWorkings("9");
     }
 
-    public void timesOnClick(View view)
-    {
+    public void timesOnClick(View view) {
         setWorkings("*");
     }
 
-    public void fourOnClick(View view)
-    {
+    public void fourOnClick(View view) {
         setWorkings("4");
     }
 
-    public void fiveOnClick(View view)
-    {
+    public void fiveOnClick(View view) {
         setWorkings("5");
     }
 
-    public void sixOnClick(View view)
-    {
+    public void sixOnClick(View view) {
         setWorkings("6");
     }
 
-    public void minusOnClick(View view)
-    {
+    public void minusOnClick(View view) {
         setWorkings("-");
     }
 
-    public void oneOnClick(View view)
-    {
+    public void oneOnClick(View view) {
         setWorkings("1");
     }
 
-    public void twoOnClick(View view)
-    {
+    public void twoOnClick(View view) {
         setWorkings("2");
     }
 
-    public void threeOnClick(View view)
-    {
+    public void threeOnClick(View view) {
         setWorkings("3");
     }
 
-    public void plusOnClick(View view)
-    {
+    public void plusOnClick(View view) {
         setWorkings("+");
     }
 
-    public void decimalOnClick(View view)
-    {
+    public void decimalOnClick(View view) {
         setWorkings(".");
     }
 
-    public void zeroOnClick(View view)
-    {
+    public void zeroOnClick(View view) {
         setWorkings("0");
     }
 
